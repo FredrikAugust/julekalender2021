@@ -1,4 +1,3 @@
-use core::panicking::panic;
 use std::collections::HashMap;
 use std::fs;
 
@@ -73,9 +72,6 @@ fn main() {
                 break;
             }
         }
-
-        println!("Uh-oh incorrect priority!");
-        panic("fuck")
     }
 
     println!("Done! Total {}", acc);
