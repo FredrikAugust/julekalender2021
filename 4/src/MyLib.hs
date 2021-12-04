@@ -9,13 +9,8 @@ import qualified Data.Text as T
 import Debug.Trace (trace)
 import qualified GHC.Real as T
 
-data Board = Board
-  { numbers :: [[Int]]
-  }
-  deriving (Show)
-
 data Bingo = Bingo
-  { boards :: [Board],
+  { boards :: [[[Int]]],
     series :: [Int],
     playedNumbers :: [Int]
   }
@@ -34,16 +29,14 @@ parseFile file =
     rawBoards = map (splitOn "\n") . splitOn "\n\n" . unlines $ drop 2 ls
     boards = map parseBoard rawBoards
 
-parseBoard :: [String] -> Board
+parseBoard :: [String] -> [[Int]]
 parseBoard rawBoard =
-  Board
-    { numbers = filter (/= []) . map (map (read @Int) . filter (/= "") . splitOn " ") $ rawBoard
-    }
+  filter (/= []) . map (map (read @Int) . filter (/= "") . splitOn " ") $ rawBoard
 
-hasBingo :: Board -> [Int] -> Bool
-hasBingo board series = any (all (`elem` series)) $ (numbers board <> (transpose $ numbers board))
+hasBingo :: [[Int]] -> [Int] -> Bool
+hasBingo board series = any (all (`elem` series)) $ (board <> (transpose $ board))
 
-runUntilBingo :: Bingo -> (Maybe Board, [Int])
+runUntilBingo :: Bingo -> (Maybe [[Int]], [Int])
 runUntilBingo game = case firstBingo of
   Nothing -> (Nothing, [])
   Just bi -> trace (show score') (find ((flip hasBingo) (playedNumbers bi)) $ boards bi, playedNumbers bi)
@@ -56,10 +49,10 @@ runUntilBingo game = case firstBingo of
     lastBingoAfter = head $ snd lastBingoBreak
     score' = score (lastBingoBefore', (playedNumbers lastBingoAfter))
 
-score :: (Maybe Board, [Int]) -> Int
+score :: (Maybe [[Int]], [Int]) -> Int
 score (board, played) = case board of
   Nothing -> 0
-  Just board' -> last played * sum (filter (not . (`elem` played)) $ concat $ numbers board')
+  Just board' -> last played * sum (filter (not . (`elem` played)) $ concat $ board')
 
 run :: Bingo -> IO ()
 run bingo = print . score $ runUntilBingo bingo
