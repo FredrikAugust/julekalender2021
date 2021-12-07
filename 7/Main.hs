@@ -1,0 +1,3 @@
+-- |
+-- Denne oppgaven ble løst i Haskell, men jeg brukte bare GHCi.
+-- Ingen lur løsning, såpass kan jeg røpe. Brute force ble brukt.
