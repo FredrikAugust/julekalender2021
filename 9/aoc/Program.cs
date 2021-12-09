@@ -18,18 +18,14 @@ for (var y = 0; y <= bounds.Item2; y++)
     {
         var tile = heatmap.GetTile(x, y)!.Value;
 
-        if (tile == 9) Console.Write("x");
+        if (tile == 9) Console.Write("1");
+        else Console.Write("0");
 
         var neighbors = heatmap.GetNeighbors(x, y);
 
         if (neighbors.All(neighbor => neighbor > tile))
         {
-            Console.Write("o");
             lowPoints.Add(new Tuple<int, int>(x, y));
-        }
-        else
-        {
-            Console.Write(" ");
         }
     }
 
