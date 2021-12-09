@@ -6,14 +6,15 @@ var text = File.ReadAllText("/Users/fredrik-alv/Code/github.com/fredrikaugust/ju
 
 var heatmap = new Heatmap(text);
 
-var count = 0;
 var bounds = heatmap.GetBounds();
 
-// List<List<int>> basins = new();
+List<Tuple<int, int>> lowPoints = new();
 
-for (int y = 0; y <= bounds.Item2; y++)
+List<int> basins = new();
+
+for (var y = 0; y <= bounds.Item2; y++)
 {
-    for (int x = 0; x <= bounds.Item1; x++)
+    for (var x = 0; x <= bounds.Item1; x++)
     {
         var tile = heatmap.GetTile(x, y)!.Value;
 
@@ -24,7 +25,7 @@ for (int y = 0; y <= bounds.Item2; y++)
         if (neighbors.All(neighbor => neighbor > tile))
         {
             Console.Write("o");
-            count += tile + 1;
+            lowPoints.Add(new Tuple<int, int>(x, y));
         }
         else
         {
@@ -35,4 +36,7 @@ for (int y = 0; y <= bounds.Item2; y++)
     Console.WriteLine();
 }
 
-Console.WriteLine(count);
+foreach (var lowPoint in lowPoints)
+{
+    basins.Add(heatmap.FloodFill(lowPoint.Item1, lowPoint.Item2));
+}
